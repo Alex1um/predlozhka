@@ -45,10 +45,13 @@ async def on_conv_start(msg: Message, state: FSMContext):
         fst = channel.find(ord(":"))
         scnd = channel.find(ord(":"), fst + 1)
         chat_id = channel[fst + 1:scnd]
+        name = db.get(channel[:scnd] + b":name")
+        if name is None:
+            name = chat_id
         try:
             status = await bot.get_chat_member(chat_id, msg.from_user.id)
             if isinstance(status, (ChatMemberMember, ChatMemberAdministrator, ChatMemberOwner)):
-                channel_list.button(text=chat_id, callback_data=chat_id)
+                channel_list.button(text=name, callback_data=chat_id)
                 is_any_channel = True
         except Exception as e:
             pass
@@ -60,10 +63,14 @@ async def on_conv_start(msg: Message, state: FSMContext):
 
 @dp.callback_query(PostForm.channel)
 async def on_callback_chat_id(cq: CallbackQuery, state: FSMContext):
+    channel_id = cq.data
+    name: bytes = db.get(f"channel:{channel_id}:name")
+    if name is None:
+        name = channel_id
     await state.update_data(channel = cq.data)
     await state.set_state(PostForm.post)
     await bot.send_message(cq.message.chat.id, "Создайте пост в следущем сообщении")
-    await cq.answer(f"Выбран чат {cq.data}")
+    await cq.answer(f"Выбран чат {name.decode('utf-8')}")
 
 @dp.message(PostForm.post)
 async def on_post(msg: Message, state: FSMContext):
@@ -72,11 +79,14 @@ async def on_post(msg: Message, state: FSMContext):
         data = await state.get_data()
         channel_id = data['channel']
         admins = db.smembers(f"channel:{channel_id}:admins")
+        name: bytes = db.get(f"channel:{channel_id}:name")
+        if name is None:
+            name = channel_id
         for admin_id in admins:
             try:
                 await msg.send_copy(admin_id, reply_markup=InlineKeyboardMarkup(inline_keyboard=[
                     [
-                        InlineKeyboardButton(text=f"Опубликовать в {channel_id}", callback_data=f"{channel_id}")
+                        InlineKeyboardButton(text=f"Опубликовать в {name.decode('utf-8')}", callback_data=f"{channel_id}")
                     ]
                 ]))
             except Exception as e:
@@ -95,7 +105,10 @@ async def on_post(msg: Message, state: FSMContext):
 @dp.callback_query()
 async def on_callback_publish(cq: CallbackQuery, state: FSMContext):
     channel_to_publish = cq.data
+    name: bytes = db.get(f"channel:{channel_to_publish}:name")
+    if name is None:
+        name = channel_to_publish
     await cq.message.edit_reply_markup(reply_markup=None)
-    msg = await cq.message.send_copy(cq.data)
+    msg = await cq.message.send_copy(channel_to_publish)
     await msg.edit_reply_markup(None)
-    return cq.answer(f"Опубликованно в {channel_to_publish}")
+    return cq.answer(f"Опубликованно в {name.decode('utf-8')}")
