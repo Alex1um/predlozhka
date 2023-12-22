@@ -19,7 +19,6 @@ class PostForm(StatesGroup):
 @dp.message(CommandStart())
 async def on_start(msg: Message, state: FSMContext):
     await state.clear()
-    db.set(f"user:{msg.from_user.id}", msg.chat.id)
     return msg.answer("Добро пожаловать", reply_markup=ReplyKeyboardMarkup(keyboard=[
         [
             KeyboardButton(text="Предложить пост")
