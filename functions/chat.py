@@ -52,7 +52,6 @@ async def on_conv_start(msg: Message, state: FSMContext):
     await state.set_state(PostForm.channel)
     return msg.answer("Выберите канал", reply_markup=channel_list.as_markup())
 
-
 @dp.callback_query(PostForm.channel)
 async def on_callback_chat_id(cq: CallbackQuery, state: FSMContext):
     await state.update_data(channel = cq.data)
@@ -69,7 +68,11 @@ async def on_post(msg: Message, state: FSMContext):
         admins = db.smembers(f"channel:{channel_id}:admins")
         for admin_id in admins:
             try:
-                await msg.send_copy(admin_id)
+                await msg.send_copy(admin_id, reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                    [
+                        InlineKeyboardButton(text=f"Опубликовать в {channel_id}", callback_data=f"{channel_id}")
+                    ]
+                ]))
             except Exception as e:
                 pass
         await state.clear()
@@ -82,3 +85,11 @@ async def on_post(msg: Message, state: FSMContext):
     else:
         return msg.answer("Пост не прошел проверку. Создайте новый пост в следущем сообщении или обновите старый")
 
+
+@dp.callback_query()
+async def on_callback_publish(cq: CallbackQuery, state: FSMContext):
+    channel_to_publish = cq.data
+    await cq.message.edit_reply_markup(reply_markup=None)
+    msg = await cq.message.send_copy(cq.data)
+    await msg.edit_reply_markup(None)
+    return cq.answer(f"Опубликованно в {channel_to_publish}")
