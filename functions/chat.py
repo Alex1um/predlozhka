@@ -6,10 +6,11 @@ from aiogram import F
 from aiogram.filters import CommandStart, Command
 from database import database as db
 from redis.commands.json.path import Path
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, ChatMemberMember, ChatMemberOwner, ChatMemberAdministrator, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, ChatMemberMember, ChatMemberOwner, ChatMemberAdministrator, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Update
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+
 
 class PostForm(StatesGroup):
     channel = State()
@@ -51,23 +52,26 @@ async def on_conv_start(msg: Message, state: FSMContext):
     await state.set_state(PostForm.channel)
     return msg.answer("Выберите канал", reply_markup=channel_list.as_markup())
 
-@dp.message(PostForm.channel)
-async def on_chat_id(msg: Message, state: FSMContext):
-    await state.update_data(channel = msg.text)
+
+@dp.callback_query(PostForm.channel)
+async def on_callback_chat_id(cq: CallbackQuery, state: FSMContext):
+    await state.update_data(channel = cq.data)
     await state.set_state(PostForm.post)
-    return msg.answer("Создайте пост в следущем сообщении")
+    await bot.send_message(cq.message.chat.id, "Создайте пост в следущем сообщении")
+    await cq.answer(f"Выбран чат {cq.data}")
 
 @dp.message(PostForm.post)
 async def on_post(msg: Message, state: FSMContext):
     # Проверка поста
     if True:
         data = await state.get_data()
-        channel_id = data.channel
-        admins = db.get(f"channel:{channel_id}:admins")
+        channel_id = data['channel']
+        admins = db.smembers(f"channel:{channel_id}:admins")
         for admin_id in admins:
-            if (admin_chat := db.get(f"user:{admin_id}")) is not None:
-                await bot.send_message(admin_chat, msg.text)
-        await msg.forward(channel_id)
+            try:
+                await msg.send_copy(admin_id)
+            except Exception as e:
+                pass
         await state.clear()
         
         return msg.answer("Пост предложен", reply_markup=ReplyKeyboardMarkup(keyboard=[
