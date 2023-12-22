@@ -40,13 +40,20 @@ async def on_conv_start(msg: Message, state: FSMContext):
     channels = db.scan(match="channel:*:admins")
     channel_list = InlineKeyboardBuilder()
     channel: bytes
+    is_any_channel = False
     for channel in channels[1]:
         fst = channel.find(ord(":"))
         scnd = channel.find(ord(":"), fst + 1)
         chat_id = channel[fst + 1:scnd]
-        status = await bot.get_chat_member(chat_id, msg.from_user.id)
-        if isinstance(status, (ChatMemberMember, ChatMemberAdministrator, ChatMemberOwner)):
-            channel_list.button(text=chat_id, callback_data=chat_id)
+        try:
+            status = await bot.get_chat_member(chat_id, msg.from_user.id)
+            if isinstance(status, (ChatMemberMember, ChatMemberAdministrator, ChatMemberOwner)):
+                channel_list.button(text=chat_id, callback_data=chat_id)
+                is_any_channel = True
+        except Exception as e:
+            pass
+    if not is_any_channel:
+        return msg.answer("Нет доступных каналов")
     channel_list.adjust(1, repeat=True)
     await state.set_state(PostForm.channel)
     return msg.answer("Выберите канал", reply_markup=channel_list.as_markup())
