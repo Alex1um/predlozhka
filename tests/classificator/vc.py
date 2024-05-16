@@ -14,3 +14,6 @@ class TestGettingTexts(unittest.TestCase):
         texts = create_texts_file(["marketing"], 5, save=True)
         texts2 = load_texts_file
         self.assertDictEqual(texts, texts2)
+
+if __name__ == "__main__":
+    unittest.main()
