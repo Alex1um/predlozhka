@@ -10,6 +10,7 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from text_classificator.instance import get_translated, classificator, translated
 
 
 class PostForm(StatesGroup):
@@ -82,8 +83,11 @@ async def on_post(msg: Message, state: FSMContext):
         name: bytes = db.get(f"channel:{channel_id}:name")
         if name is None:
             name = channel_id
+        # theme = get_translated(msg.text)
+        translate, prob = get_translated(msg.text)
         for admin_id in admins:
             try:
+                await bot.send_message(admin_id, f"Новый пост в {name.decode('utf-8')} от {msg.from_user.first_name}\nТема: {translate} с вероятностью {int(prob * 100)}%")
                 await msg.send_copy(admin_id, reply_markup=InlineKeyboardMarkup(inline_keyboard=[
                     [
                         InlineKeyboardButton(text=f"Опубликовать в {name.decode('utf-8')}", callback_data=f"{channel_id}")
