@@ -24,6 +24,7 @@ class TestSpamChecker(unittest.TestCase):
             writer.writerow(["Привет, как дела?"])
             writer.writerow(["Это тестовое сообщение."])
             writer.writerow(["Погода сегодня отличная."])
+            writer.writerow(["Сооснователь OpenAI Илья Суцкевер объявил об уходе из компании"])
 
         # Создаем экземпляр SpamChecker
         self.spam_checker = SpamChecker(self.vectorizer_file, self.messages_file)
@@ -41,6 +42,11 @@ class TestSpamChecker(unittest.TestCase):
         new_messages = ["Это тестовое сообщение."]
         is_spam = self.spam_checker.check_spam(new_messages, threshold=0.8)
         self.assertTrue(is_spam["Это тестовое сообщение."])
+
+    def test_check_spam_with_spam_large(self):
+        new_messages = ["Илья Суцкевер, сооснователь OpenAI объявил, что уходит из компании"]
+        is_spam = self.spam_checker.check_spam(new_messages, threshold=0.7)
+        self.assertTrue(is_spam[new_messages[0]])
 
     def test_load_existing_vectorizer_and_matrix(self):
         self.assertTrue(os.path.exists(self.vectorizer_file))
