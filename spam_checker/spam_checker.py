@@ -34,6 +34,7 @@ class SpamChecker:
         return joblib.load(filename)
 
     def check_spam(self, new_messages: list, threshold=0.8):
+        is_spam = dict()
         # Проверка новых сообщений поочередно
         for new_message in new_messages:
             # Преобразование нового сообщения в TF-IDF вектор
@@ -42,7 +43,6 @@ class SpamChecker:
             # Вычисление косинусного сходства между новым сообщением и уже имеющимися
             cosine_similarities = cosine_similarity(new_message_tfidf, self.tfidf_matrix)
 
-            is_spam = dict()
             if any(similarity > threshold for similarity in cosine_similarities[0]):
                 is_spam[new_message] = True
             else:
@@ -57,4 +57,4 @@ class SpamChecker:
                 with open(self.messages_file, 'a', newline='', encoding='utf-8') as csvfile:
                     writer = csv.writer(csvfile)
                     writer.writerow([new_message])
-            return is_spam
+        return is_spam
