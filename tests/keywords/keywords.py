@@ -35,7 +35,8 @@ class TestKeywordCheck(unittest.TestCase):
 
     @patch('keywords_checker.keywords_checker.normalize_word')
     def test_keywords_in_different_forms(self, mock_normalize_word):
-        mock_normalize_word.side_effect = lambda x: {"люблю": "любить", "программировать": "программировать", "программирование": "программировать"}.get(x, x.lower())
+        mock_normalize_word.side_effect = lambda x: {
+            "люблю": "любить", "программировать": "программировать", "программирование": "программировать"}.get(x, x.lower())
         text = "Я люблю программировать"
         keywords = ["программирование"]
         expected_result = {"программировать": True}
@@ -53,7 +54,8 @@ class TestKeywordCheck(unittest.TestCase):
 
     @patch('keywords_checker.keywords_checker.normalize_word')
     def test_partial_word_match(self, mock_normalize_word):
-        mock_normalize_word.side_effect = lambda x: {"программирование": "программировать", "программировать": "программирование"}.get(x, x.lower())
+        mock_normalize_word.side_effect = lambda x: {
+            "программирование": "программировать", "программировать": "программирование"}.get(x, x.lower())
         text = "Программирование на Python"
         keywords = ["программировать", "python"]
         expected_result = {"программирование": True, "python": True}

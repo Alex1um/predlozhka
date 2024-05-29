@@ -1,6 +1,7 @@
 import unittest
 from text_classificator.classificator import Classificator
 
+
 class TestClassificator(unittest.TestCase):
     classificator = Classificator.create_or_load(
         [
@@ -16,14 +17,15 @@ class TestClassificator(unittest.TestCase):
         ],
         50,
     )
-    
+
     def test_predictions(self):
         from . import texts
         for n, v in vars(texts).items():
             if n.startswith("_"):
-                continue    
+                continue
             prediction, probability = self.classificator.predict_max(v)
             self.assertGreaterEqual(probability, 0.2)
+
 
 if __name__ == "__main__":
     unittest.main()

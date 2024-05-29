@@ -6,4 +6,3 @@ def preprocess(text: str) -> str:
     text = text.replace("(", "( ")
     text = text.replace(")", " )")
     return text
-

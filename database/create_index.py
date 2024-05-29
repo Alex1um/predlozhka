@@ -1,5 +1,5 @@
-from database import database as r
-from redis.commands.search.field import NumericField, TextField, Field, VectorField
+from database.database import database as r
+from redis.commands.search.field import NumericField, TextField
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 
 channel_schema = {
@@ -13,7 +13,7 @@ rs.create_index(
     definition=IndexDefinition(
         prefix=["channels:"],
         index_type=IndexType.JSON,
-    )
+    ),
 )
 
 user_schema = {
@@ -26,5 +26,5 @@ rs.create_index(
     definition=IndexDefinition(
         prefix=["users:"],
         index_type=IndexType.JSON,
-    )
+    ),
 )

@@ -13,6 +13,7 @@ _cache_path = Path(__file__).parent.parent / "cache"
 sub_ids_file_path = _cache_path / "sub_ids.pkl"
 texts_file_path = _cache_path / "texts.pkl"
 
+
 def remove_html_tags(text):
     """
     Remove HTML tags from a given text.
@@ -48,7 +49,8 @@ def get_timeline(session: requests.Session, ids, count: int = 50) -> str:
         str: The text content of each timeline item with HTML tags removed.
     """
     params = {"subsitesIds": ids} if ids is not None else None
-    resp = session.get(api_timeline, headers={"User-Agent": user_agent}, params=params)
+    resp = session.get(api_timeline, headers={
+                       "User-Agent": user_agent}, params=params)
     last_id = None
     last_sorting_value = None
     while count > 0 and resp.status_code == 200:
@@ -153,7 +155,8 @@ def create_texts_file(topicks: list[str], texts_count: int, save: bool = True) -
                 sub_ids[topic] = get_topic_ids(session, topic)
             if sub_ids[topic] is None:
                 continue
-            texts[topic] = get_topic_posts(session, sub_ids[topic], count=texts_count)
+            texts[topic] = get_topic_posts(
+                session, sub_ids[topic], count=texts_count)
         with sub_ids_file_path.open("wb") as f:
             pickle.dump(sub_ids, f)
         if save:

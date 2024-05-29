@@ -51,7 +51,7 @@ class Classificator:
             l = len(v)
             labels.extend([k] * l)
             self.fitted_count += l
-        
+
         self.classes |= set(labels)
 
         self.pps[0].fit(texts, labels)
@@ -61,7 +61,7 @@ class Classificator:
     def partial_fit(self, data: dict[str, list[str]]):
         """
         Fits the model to a new batch of data, updating the model with the provided texts and labels.
-        
+
         Parameters:
             data (dict[str, list[str]]): A dictionary containing the data to partially fit the model on. The keys represent the labels, and the values are lists of texts.
 
@@ -75,7 +75,7 @@ class Classificator:
             l = len(v)
             labels.extend([k] * l)
             self.fitted_count += l
-        
+
         self.classes |= set(labels)
 
         self.model2.partial_fit(texts, labels, classes=np.array(data.keys()))
@@ -160,7 +160,7 @@ class Classificator:
         cls = cls()
         cls.fit(texts)
         return cls
-    
+
     def save(self):
         """
         Save the current instance of the class to a file.
@@ -189,7 +189,7 @@ class Classificator:
         """
         with classificator_path.open("rb") as f:
             return joblib.load(f)
-    
+
     @classmethod
     def create_or_load(cls, subs: list[str], count: int):
         """
