@@ -32,7 +32,7 @@ class Classificator:
         classes (set): A set of class labels.
         fitted_count (int): The number of texts that have been fitted to the model.
     """
-    
+
     def __init__(self):
         """
         Initializes the Classificator object with a TfidfVectorizer, SVC, MultinomialNB, \

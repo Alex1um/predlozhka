@@ -24,6 +24,9 @@ from database import database as db
 
 
 class PostForm(StatesGroup):
+    """
+    Post form states class for FSM
+    """
     channel = State()
     post = State()
 

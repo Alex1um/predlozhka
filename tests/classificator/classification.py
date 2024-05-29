@@ -7,6 +7,9 @@ from tests.classificator import texts
 
 
 class TestClassificator(unittest.TestCase):
+    """
+    Test class for the Classificator class.
+    """
     classificator = Classificator.create_or_load(
         [
             "marketing",
