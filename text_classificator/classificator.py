@@ -20,6 +20,19 @@ classificator_path = _cache_path / "classificator.pkl"
 
 
 class Classificator:
+    """
+    Classificator class to classify texts.
+
+    Attributes:
+        vectorizer (TfidfVectorizer): The TfidfVectorizer model used to vectorize the texts.
+        model (SVC): The SVC model used to classify the texts.
+        model2 (MultinomialNB): The MultinomialNB model used to classify the texts.
+        model3 (SGDClassifier): The SGDClassifier model used to classify the texts.
+        pps (tuple[Pipeline]): A tuple of pipelines combining the vectorizer with each model.
+        classes (set): A set of class labels.
+        fitted_count (int): The number of texts that have been fitted to the model.
+    """
+    
     def __init__(self):
         """
         Initializes the Classificator object with a TfidfVectorizer, SVC, MultinomialNB, \
@@ -68,7 +81,8 @@ class Classificator:
 
     def partial_fit(self, data: dict[str, list[str]]):
         """
-        Fits the model to a new batch of data, updating the model with the provided texts and labels.
+        Fits the model to a new batch of data, updating the model with the provided texts and
+        labels.
 
         Parameters:
             data (dict[str, list[str]]): A dictionary containing the data to partially fit \
@@ -171,9 +185,9 @@ class Classificator:
             cls: A new instance of the class that has been fitted to the given data.
         """
         texts = create_or_load_texts(subs, count, remade)
-        cls = cls()
-        cls.fit(texts)
-        return cls
+        inited_cls = cls()
+        inited_cls.fit(texts)
+        return inited_cls
 
     def save(self):
         """

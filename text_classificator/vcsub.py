@@ -1,14 +1,15 @@
 """
 getting training texts module
 """
-import re
 import pickle
-from pathlib import Path
+import re
 from os.path import getmtime
+from pathlib import Path
 from time import time
-import requests
-from text_classificator.preprocess import preprocess
 
+import requests
+
+from text_classificator.preprocess import preprocess
 
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0"
 API_TIMELINE = "https://api.vc.ru/v2.5/timeline"
@@ -54,7 +55,8 @@ def get_timeline(session: requests.Session, ids, count: int = 50) -> str:
     """
     params = {"subsitesIds": ids} if ids is not None else None
     resp = session.get(API_TIMELINE, headers={
-                       "User-Agent": USER_AGENT}, params=params)
+        "User-Agent": USER_AGENT
+    }, params=params)
     last_id = None
     last_sorting_value = None
     while count > 0 and resp.status_code == 200:
@@ -132,7 +134,8 @@ def get_topic_posts(session: requests.Session, topic_id: str, count: int = 10):
     return tuple(get_timeline(session, topic_id, count))
 
 
-def create_texts_file(topicks: list[str], texts_count: int, save: bool = True) -> dict[str, list[str]]:
+def create_texts_file(topicks: list[str], texts_count: int, save: bool = True) -> dict[
+    str, list[str]]:
     """
     Creates a file containing texts for a list of topics.
 
@@ -144,9 +147,8 @@ def create_texts_file(topicks: list[str], texts_count: int, save: bool = True) -
     Returns:
         dict[str, list[str]]: A dictionary containing the retrieved texts for each topic.
 
-    Examples:
-        >>> create_texts_file(["marketing", "tech"], 5)
-        {'marketing': ['text1', 'text2', 'text3', 'text4', 'text5'], 'tech': ['text1', 'text2', 'text3', 'text4', 'text5']}
+    Examples: >>> create_texts_file(["marketing", "tech"], 5) {'marketing': ['text1', 'text2',
+    'text3', 'text4', 'text5'], 'tech': ['text1', 'text2', 'text3', 'text4', 'text5']}
     """
     sub_ids = {}
     if sub_ids_file_path.exists():
@@ -169,7 +171,8 @@ def create_texts_file(topicks: list[str], texts_count: int, save: bool = True) -
     return texts
 
 
-def create_or_load_texts(topicks: list[str], texts_count: int, recreate: bool = False) -> dict[str, list[str]]:
+def create_or_load_texts(topicks: list[str], texts_count: int, recreate: bool = False) -> dict[
+    str, list[str]]:
     """
     Creates or loads texts for a list of topics based on the provided parameters.
     Also updates the texts file if it is older than 30 days.
@@ -185,7 +188,8 @@ def create_or_load_texts(topicks: list[str], texts_count: int, recreate: bool = 
     Examples: >>> create_or_load_texts(["marketing", "tech"], 5) {'marketing': ['text1', 'text2',
     'text3', 'text4', 'text5'], 'tech': ['text1', 'text2', 'text3', 'text4', 'text5']}
     """
-    if not recreate and texts_file_path.exists() and time() - getmtime(texts_file_path) < 60 * 60 * 24 * 30:
+    if not recreate and texts_file_path.exists() and time() - getmtime(
+            texts_file_path) < 60 * 60 * 24 * 30:
         with texts_file_path.open("rb") as f:
             old_topicks, old_texts_count, old_texts = pickle.load(f)
         if old_topicks == topicks and old_texts_count == texts_count:

@@ -73,6 +73,17 @@ async def on_reset(msg: Message, state: FSMContext):
 
 @dp.message(F.text == "Предложить пост")
 async def on_conv_start(msg: Message, state: FSMContext):
+    """
+    Asynchronous function that handles the on_conv_start event triggered by a message with text
+    "Предложить пост".
+    
+    Args:
+        msg (aiogram.types.Message): The message object that triggered the event.
+        state (aiogram.dispatcher.filters.state.FSMContext): The current state of the conversation.
+    
+    Returns:
+        aiogram.types.Message: The message object with the response to the user.
+    """
     channels = db.scan(match="channel:*:admins")
     channel_list = InlineKeyboardBuilder()
     channel: bytes
@@ -103,6 +114,16 @@ async def on_conv_start(msg: Message, state: FSMContext):
 
 @dp.callback_query(PostForm.channel)
 async def on_callback_chat_id(cq: CallbackQuery, state: FSMContext):
+    """
+    Callback function triggered when a callback query with the state `PostForm.channel` is received.
+    
+    Parameters:
+        cq (CallbackQuery): The callback query object.
+        state (FSMContext): The current state of the conversation.
+    
+    Returns:
+        None
+    """
     channel_id = cq.data
     name: bytes = db.get(f"channel:{channel_id}:name")
     if name is None:
@@ -115,6 +136,17 @@ async def on_callback_chat_id(cq: CallbackQuery, state: FSMContext):
 
 @dp.message(PostForm.post)
 async def on_post(msg: Message, state: FSMContext):
+    """
+    Asynchronous function that handles the on_post event triggered by a message in the
+    PostForm.post state.
+    
+    Args:
+        msg (aiogram.types.Message): The message object that triggered the event.
+        state (aiogram.dispatcher.filters.state.FSMContext): The current state of the conversation.
+    
+    Returns:
+        aiogram.types.Message: The message object with the response to the user.
+    """
     # Проверка поста
     if True:
         data = await state.get_data()
@@ -163,6 +195,16 @@ async def on_post(msg: Message, state: FSMContext):
 
 @dp.callback_query()
 async def on_callback_publish(cq: CallbackQuery, _: FSMContext):
+    """
+    Asynchronous function that handles the on_callback_publish event triggered by a callback query.
+    
+    Parameters:
+        cq (CallbackQuery): The callback query object.
+        _ (FSMContext): The current state of the conversation.
+    
+    Returns:
+        None
+    """
     channel_to_publish = cq.data
     name: bytes = db.get(f"channel:{channel_to_publish}:name")
     if name is None:
