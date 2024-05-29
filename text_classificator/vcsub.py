@@ -1,14 +1,14 @@
-import requests
 import re
 import pickle
 from pathlib import Path
 from os.path import getmtime
 from time import time
 from text_classificator.preprocess import preprocess
+import requests
 
 
-user_agent = "Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0"
-api_timeline = "https://api.vc.ru/v2.5/timeline"
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0"
+API_TIMELINE = "https://api.vc.ru/v2.5/timeline"
 _cache_path = Path(__file__).parent.parent / "cache"
 sub_ids_file_path = _cache_path / "sub_ids.pkl"
 texts_file_path = _cache_path / "texts.pkl"
@@ -49,8 +49,8 @@ def get_timeline(session: requests.Session, ids, count: int = 50) -> str:
         str: The text content of each timeline item with HTML tags removed.
     """
     params = {"subsitesIds": ids} if ids is not None else None
-    resp = session.get(api_timeline, headers={
-                       "User-Agent": user_agent}, params=params)
+    resp = session.get(API_TIMELINE, headers={
+                       "User-Agent": USER_AGENT}, params=params)
     last_id = None
     last_sorting_value = None
     while count > 0 and resp.status_code == 200:
@@ -69,8 +69,8 @@ def get_timeline(session: requests.Session, ids, count: int = 50) -> str:
             if count == 0:
                 return
         resp = session.get(
-            api_timeline,
-            headers={"User-Agent": user_agent},
+            API_TIMELINE,
+            headers={"User-Agent": USER_AGENT},
             params={
                 "markdown": False,
                 "lastId": last_id,
@@ -101,7 +101,7 @@ def get_topic_ids(session: requests.Session, topic: str) -> str:
     """
     api_url = f"https://vc.ru/{topic}"
 
-    page = session.get(api_url, headers={"User-Agent": user_agent})
+    page = session.get(api_url, headers={"User-Agent": USER_AGENT})
     begin = page.text.find(
         '<meta property="og:image" content="https://vc.ru/cover/fb/s/'
     )

@@ -1,13 +1,13 @@
+from os.path import getmtime
+from time import time
+from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import SVC
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.linear_model import SGDClassifier
 import numpy as np
-from pathlib import Path
 import joblib
-from os.path import getmtime
-from time import time
 
 _cache_path = Path(__file__).parent.parent / "cache"
 classificator_path = _cache_path / "classificator.pkl"
@@ -16,7 +16,8 @@ classificator_path = _cache_path / "classificator.pkl"
 class Classificator:
     def __init__(self):
         """
-        Initializes the Classificator object with a TfidfVectorizer, SVC, MultinomialNB, and SGDClassifier models.
+        Initializes the Classificator object with a TfidfVectorizer, SVC, MultinomialNB, \
+          and SGDClassifier models.
         Initializes self.pps with pipelines combining the vectorizer with each model.
         Initializes an empty set for classes and sets fitted_count to 0.
         """
@@ -39,7 +40,8 @@ class Classificator:
         Fits the model to the given data.
 
         Parameters:
-            data (dict[str, list[str]]): A dictionary containing the data to fit the model on. The keys represent the labels, and the values are lists of texts.
+            data (dict[str, list[str]]): A dictionary containing the data to fit the model on. \
+            The keys represent the labels, and the values are lists of texts.
 
         Returns:
             None
@@ -63,7 +65,8 @@ class Classificator:
         Fits the model to a new batch of data, updating the model with the provided texts and labels.
 
         Parameters:
-            data (dict[str, list[str]]): A dictionary containing the data to partially fit the model on. The keys represent the labels, and the values are lists of texts.
+            data (dict[str, list[str]]): A dictionary containing the data to partially fit \
+                  the model on. The keys represent the labels, and the values are lists of texts.
 
         Returns:
             None
@@ -89,7 +92,8 @@ class Classificator:
             text (str): The input text to predict probabilities for.
 
         Returns:
-            dict[str, tuple[float]]: A dictionary where the keys are class labels and the values are tuples of probabilities.
+            dict[str, tuple[float]]: A dictionary where the keys are class labels and \
+                  the values are tuples of probabilities.
         """
         return {
             k: np.array(v)
@@ -109,7 +113,8 @@ class Classificator:
             text (str): The input text to predict the average probabilities for.
 
         Returns:
-            dict[str, float]: A dictionary where the keys are class labels and the values are the average probabilities.
+            dict[str, float]: A dictionary where the keys are class labels and the \
+                  values are the average probabilities.
         """
         return {
             k: np.average(v) for k, v in self.predict_proba(text).items()
@@ -123,7 +128,8 @@ class Classificator:
             text (str): The input text to predict the class for.
 
         Returns:
-            tuple[str, float]: A tuple containing the class label with the highest average probability and the probability value itself.
+            tuple[str, float]: A tuple containing the class label with the highest \
+                  average probability and the probability value itself.
         """
         return max(tuple(self.predict_avgs(text).items()), key=lambda x: x[1])
 
@@ -148,8 +154,11 @@ class Classificator:
         Creates a new instance of the class and fits it to the given data from VC.ru.
 
         Args:
-            subs (list[str], optional): A list of subreddits to fetch data from. Defaults to ["marketing", "crypto", "tech", "flood", "dev", "design", "opinions", "ml", "tribuna"].
-            count (int, optional): The number of texts to fetch from each subreddit. Defaults to 30.
+            subs (list[str], optional): A list of subreddits to fetch data from. \
+                  Defaults to ["marketing", "crypto", "tech", "flood", "dev", "design", \
+                      "opinions", "ml", "tribuna"].
+            count (int, optional): The number of texts to fetch from each subreddit. \
+                  Defaults to 30.
             remade (bool, optional): Whether to recreate the texts file. Defaults to False.
 
         Returns:
@@ -165,7 +174,8 @@ class Classificator:
         """
         Save the current instance of the class to a file.
 
-        This function saves the current instance of the class to a file using joblib.dump(). The saved file is in binary format.
+        This function saves the current instance of the class to a file using joblib.dump(). \
+              The saved file is in binary format.
 
         Parameters:
             self: The current instance of the class.
