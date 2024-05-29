@@ -1,5 +1,8 @@
-from aiogram import Bot
+"""
+Create bot
+"""
 from os import getenv
+from aiogram import Bot
 
 TOKEN = getenv("BOT_TOKEN")
 

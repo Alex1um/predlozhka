@@ -1,17 +1,22 @@
-import requests
-import re
+"""
+getting training texts module
+"""
 import pickle
-from pathlib import Path
+import re
 from os.path import getmtime
+from pathlib import Path
 from time import time
+
+import requests
+
 from text_classificator.preprocess import preprocess
 
-
-user_agent = "Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0"
-api_timeline = "https://api.vc.ru/v2.5/timeline"
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0"
+API_TIMELINE = "https://api.vc.ru/v2.5/timeline"
 _cache_path = Path(__file__).parent.parent / "cache"
 sub_ids_file_path = _cache_path / "sub_ids.pkl"
 texts_file_path = _cache_path / "texts.pkl"
+
 
 def remove_html_tags(text):
     """
@@ -23,9 +28,9 @@ def remove_html_tags(text):
     Returns:
         str: The text with HTML tags removed.
 
-    This function uses regular expressions to remove HTML tags from a given text. It compiles a regular expression pattern
-    to match any HTML tag and then uses the `re.sub()` function to replace all occurrences of the pattern with an
-    empty string. The resulting text is returned.
+    This function uses regular expressions to remove HTML tags from a given text. It compiles a
+    regular expression pattern to match any HTML tag and then uses the `re.sub()` function to
+    replace all occurrences of the pattern with an empty string. The resulting text is returned.
 
     Example:
         >>> remove_html_tags("<p>Hello, <b>world</b>!</p>")
@@ -37,7 +42,8 @@ def remove_html_tags(text):
 
 def get_timeline(session: requests.Session, ids, count: int = 50) -> str:
     """
-    A function to get text from posts based on timeline(last posts from current time) in given subsite.
+    A function to get text from posts based on timeline(last posts from current time) in given
+    subsite.
 
     Args:
         session (requests.Session): The session to use for making the API request.
@@ -48,7 +54,9 @@ def get_timeline(session: requests.Session, ids, count: int = 50) -> str:
         str: The text content of each timeline item with HTML tags removed.
     """
     params = {"subsitesIds": ids} if ids is not None else None
-    resp = session.get(api_timeline, headers={"User-Agent": user_agent}, params=params)
+    resp = session.get(API_TIMELINE, headers={
+        "User-Agent": USER_AGENT
+    }, params=params)
     last_id = None
     last_sorting_value = None
     while count > 0 and resp.status_code == 200:
@@ -67,8 +75,8 @@ def get_timeline(session: requests.Session, ids, count: int = 50) -> str:
             if count == 0:
                 return
         resp = session.get(
-            api_timeline,
-            headers={"User-Agent": user_agent},
+            API_TIMELINE,
+            headers={"User-Agent": USER_AGENT},
             params={
                 "markdown": False,
                 "lastId": last_id,
@@ -99,7 +107,7 @@ def get_topic_ids(session: requests.Session, topic: str) -> str:
     """
     api_url = f"https://vc.ru/{topic}"
 
-    page = session.get(api_url, headers={"User-Agent": user_agent})
+    page = session.get(api_url, headers={"User-Agent": USER_AGENT})
     begin = page.text.find(
         '<meta property="og:image" content="https://vc.ru/cover/fb/s/'
     )
@@ -126,7 +134,8 @@ def get_topic_posts(session: requests.Session, topic_id: str, count: int = 10):
     return tuple(get_timeline(session, topic_id, count))
 
 
-def create_texts_file(topicks: list[str], texts_count: int, save: bool = True) -> dict[str, list[str]]:
+def create_texts_file(topicks: list[str], texts_count: int, save: bool = True) -> dict[
+    str, list[str]]:
     """
     Creates a file containing texts for a list of topics.
 
@@ -138,9 +147,8 @@ def create_texts_file(topicks: list[str], texts_count: int, save: bool = True) -
     Returns:
         dict[str, list[str]]: A dictionary containing the retrieved texts for each topic.
 
-    Examples:
-        >>> create_texts_file(["marketing", "tech"], 5)
-        {'marketing': ['text1', 'text2', 'text3', 'text4', 'text5'], 'tech': ['text1', 'text2', 'text3', 'text4', 'text5']}
+    Examples: >>> create_texts_file(["marketing", "tech"], 5) {'marketing': ['text1', 'text2',
+    'text3', 'text4', 'text5'], 'tech': ['text1', 'text2', 'text3', 'text4', 'text5']}
     """
     sub_ids = {}
     if sub_ids_file_path.exists():
@@ -153,7 +161,8 @@ def create_texts_file(topicks: list[str], texts_count: int, save: bool = True) -
                 sub_ids[topic] = get_topic_ids(session, topic)
             if sub_ids[topic] is None:
                 continue
-            texts[topic] = get_topic_posts(session, sub_ids[topic], count=texts_count)
+            texts[topic] = get_topic_posts(
+                session, sub_ids[topic], count=texts_count)
         with sub_ids_file_path.open("wb") as f:
             pickle.dump(sub_ids, f)
         if save:
@@ -162,7 +171,8 @@ def create_texts_file(topicks: list[str], texts_count: int, save: bool = True) -
     return texts
 
 
-def create_or_load_texts(topicks: list[str], texts_count: int, recreate: bool = False) -> dict[str, list[str]]:
+def create_or_load_texts(topicks: list[str], texts_count: int, recreate: bool = False) -> dict[
+    str, list[str]]:
     """
     Creates or loads texts for a list of topics based on the provided parameters.
     Also updates the texts file if it is older than 30 days.
@@ -175,11 +185,11 @@ def create_or_load_texts(topicks: list[str], texts_count: int, recreate: bool = 
     Returns:
         dict[str, list[str]]: A dictionary containing the retrieved texts for each topic.
 
-    Examples:
-        >>> create_or_load_texts(["marketing", "tech"], 5)
-        {'marketing': ['text1', 'text2', 'text3', 'text4', 'text5'], 'tech': ['text1', 'text2', 'text3', 'text4', 'text5']}
+    Examples: >>> create_or_load_texts(["marketing", "tech"], 5) {'marketing': ['text1', 'text2',
+    'text3', 'text4', 'text5'], 'tech': ['text1', 'text2', 'text3', 'text4', 'text5']}
     """
-    if not recreate and texts_file_path.exists() and time() - getmtime(texts_file_path) < 60 * 60 * 24 * 30:
+    if not recreate and texts_file_path.exists() and time() - getmtime(
+            texts_file_path) < 60 * 60 * 24 * 30:
         with texts_file_path.open("rb") as f:
             old_topicks, old_texts_count, old_texts = pickle.load(f)
         if old_topicks == topicks and old_texts_count == texts_count:

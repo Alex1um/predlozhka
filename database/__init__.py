@@ -1,1 +1,4 @@
-from .database import *
+"""
+Redis database Functions
+"""
+from .database import database
