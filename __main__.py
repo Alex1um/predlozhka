@@ -11,7 +11,8 @@ async def main():
     """
     Asynchronous function that starts the polling process for the bot.
 
-    This function is responsible for starting the polling process for the bot. It uses the `dp` object to start polling for updates from the bot.
+    This function is responsible for starting the polling process for the bot. It uses the `dp`
+    object to start polling for updates from the bot.
 
     Parameters:
         None

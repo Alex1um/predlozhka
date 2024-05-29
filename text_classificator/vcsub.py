@@ -27,9 +27,9 @@ def remove_html_tags(text):
     Returns:
         str: The text with HTML tags removed.
 
-    This function uses regular expressions to remove HTML tags from a given text. It compiles a regular expression pattern
-    to match any HTML tag and then uses the `re.sub()` function to replace all occurrences of the pattern with an
-    empty string. The resulting text is returned.
+    This function uses regular expressions to remove HTML tags from a given text. It compiles a
+    regular expression pattern to match any HTML tag and then uses the `re.sub()` function to
+    replace all occurrences of the pattern with an empty string. The resulting text is returned.
 
     Example:
         >>> remove_html_tags("<p>Hello, <b>world</b>!</p>")
@@ -41,7 +41,8 @@ def remove_html_tags(text):
 
 def get_timeline(session: requests.Session, ids, count: int = 50) -> str:
     """
-    A function to get text from posts based on timeline(last posts from current time) in given subsite.
+    A function to get text from posts based on timeline(last posts from current time) in given
+    subsite.
 
     Args:
         session (requests.Session): The session to use for making the API request.
@@ -181,9 +182,8 @@ def create_or_load_texts(topicks: list[str], texts_count: int, recreate: bool = 
     Returns:
         dict[str, list[str]]: A dictionary containing the retrieved texts for each topic.
 
-    Examples:
-        >>> create_or_load_texts(["marketing", "tech"], 5)
-        {'marketing': ['text1', 'text2', 'text3', 'text4', 'text5'], 'tech': ['text1', 'text2', 'text3', 'text4', 'text5']}
+    Examples: >>> create_or_load_texts(["marketing", "tech"], 5) {'marketing': ['text1', 'text2',
+    'text3', 'text4', 'text5'], 'tech': ['text1', 'text2', 'text3', 'text4', 'text5']}
     """
     if not recreate and texts_file_path.exists() and time() - getmtime(texts_file_path) < 60 * 60 * 24 * 30:
         with texts_file_path.open("rb") as f:

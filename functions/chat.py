@@ -129,7 +129,8 @@ async def on_post(msg: Message, state: FSMContext):
             try:
                 await bot.send_message(
                     admin_id,
-                    f"Новый пост в {name.decode('utf-8')} от {msg.from_user.first_name}\nТема: {translate} с вероятностью {int(prob * 100)}%",
+                    f"Новый пост в {name.decode('utf-8')} от {msg.from_user.first_name}\nТема:"
+                    f" {translate} с вероятностью {int(prob * 100)}%",
                 )
                 await msg.send_copy(
                     admin_id,

@@ -2,15 +2,17 @@
 classificator module
 """
 from os.path import getmtime
-from time import time
 from pathlib import Path
+from time import time
+
+import joblib
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.svm import SVC
+from sklearn.linear_model import SGDClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import make_pipeline, Pipeline
-from sklearn.linear_model import SGDClassifier
-import numpy as np
-import joblib
+from sklearn.svm import SVC
+
 from text_classificator.vcsub import create_or_load_texts
 
 _cache_path = Path(__file__).parent.parent / "cache"
@@ -139,20 +141,20 @@ class Classificator:
 
     @classmethod
     def from_vcs(
-        cls,
-        subs: list[str] = [
-            "marketing",
-            "crypto",
-            "tech",
-            "flood",
-            "dev",
-            "design",
-            "opinions",
-            "ml",
-            "tribuna",
-        ],
-        count: int = 30,
-        remade: bool = False,
+            cls,
+            subs: list[str] = [
+                "marketing",
+                "crypto",
+                "tech",
+                "flood",
+                "dev",
+                "design",
+                "opinions",
+                "ml",
+                "tribuna",
+            ],
+            count: int = 30,
+            remade: bool = False,
     ):
         """
         Creates a new instance of the class and fits it to the given data from VC.ru.
@@ -218,7 +220,9 @@ class Classificator:
         """
         if classificator_path.exists():
             loaded = cls.load()
-            if loaded.fitted_count / len(loaded.classes) == count and set(subs) == loaded.classes and time() - getmtime(classificator_path) < 60 * 60 * 24 * 30:
+            if loaded.fitted_count / len(loaded.classes) == count and set(
+                    subs) == loaded.classes and time() - getmtime(
+                    classificator_path) < 60 * 60 * 24 * 30:
                 print("loaded")
                 return loaded
         print("getting")
