@@ -71,7 +71,7 @@ def get_keywords_msg(text):
     result = check_for_keywords(text, keywords)
     if any(result.values()):
         message = 'Были обнаружены следующие ключевые слова: '
-        for key, val in result:
+        for key, val in result.items():
             if val:
                 message += f'{key} '
         return message
