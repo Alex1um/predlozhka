@@ -1,26 +1,23 @@
 from aiogram.types import Message
-from dispatcher import dp
-from bot import bot
 from aiogram import F
 from aiogram.filters import CommandStart, Command
-from database import database as db
-from redis.commands.json.path import Path
 from aiogram.types import (
     KeyboardButton,
     ReplyKeyboardMarkup,
-    ReplyKeyboardRemove,
     ChatMemberMember,
     ChatMemberOwner,
     ChatMemberAdministrator,
     InlineKeyboardMarkup,
     InlineKeyboardButton,
     CallbackQuery,
-    Update,
 )
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from text_classificator.instance import get_translated, classificator, translated
+from text_classificator.instance import get_translated
+from dispatcher import dp
+from bot import bot
+from database import database as db
 
 
 class PostForm(StatesGroup):
@@ -72,7 +69,7 @@ async def on_conv_start(msg: Message, state: FSMContext):
             ):
                 channel_list.button(text=name, callback_data=chat_id)
                 is_any_channel = True
-        except Exception as e:
+        except Exception:
             pass
     if not is_any_channel:
         return msg.answer("Нет доступных каналов")
@@ -124,7 +121,7 @@ async def on_post(msg: Message, state: FSMContext):
                         ]
                     ),
                 )
-            except Exception as e:
+            except Exception:
                 pass
         await state.clear()
 
@@ -141,7 +138,7 @@ async def on_post(msg: Message, state: FSMContext):
 
 
 @dp.callback_query()
-async def on_callback_publish(cq: CallbackQuery, state: FSMContext):
+async def on_callback_publish(cq: CallbackQuery, _: FSMContext):
     channel_to_publish = cq.data
     name: bytes = db.get(f"channel:{channel_to_publish}:name")
     if name is None:

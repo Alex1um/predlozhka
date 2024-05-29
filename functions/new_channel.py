@@ -1,8 +1,8 @@
-from dispatcher import dp
-from database import database
 from aiogram.filters import ChatMemberUpdatedFilter, IS_NOT_MEMBER, ADMINISTRATOR, IS_MEMBER
 from aiogram.types import ChatMemberUpdated
 from bot import bot
+from dispatcher import dp
+from database import database
 
 
 @dp.my_chat_member(ChatMemberUpdatedFilter(IS_NOT_MEMBER >> ADMINISTRATOR))

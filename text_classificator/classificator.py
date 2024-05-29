@@ -8,6 +8,7 @@ from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.linear_model import SGDClassifier
 import numpy as np
 import joblib
+from text_classificator.vcsub import create_or_load_texts
 
 _cache_path = Path(__file__).parent.parent / "cache"
 classificator_path = _cache_path / "classificator.pkl"
@@ -164,7 +165,6 @@ class Classificator:
         Returns:
             cls: A new instance of the class that has been fitted to the given data.
         """
-        from .vcsub import create_or_load_texts
         texts = create_or_load_texts(subs, count, remade)
         cls = cls()
         cls.fit(texts)
@@ -187,7 +187,7 @@ class Classificator:
             joblib.dump(self, f)
 
     @classmethod
-    def load(self):
+    def load(cls):
         """
         Loads the current instance of the class from a file in binary format.
 
@@ -219,6 +219,6 @@ class Classificator:
                 print("loaded")
                 return loaded
         print("getting")
-        cls = cls.from_vcs(subs, count)
-        cls.save()
-        return cls
+        cls_from_cvs = cls.from_vcs(subs, count)
+        cls_from_cvs.save()
+        return cls_from_cvs

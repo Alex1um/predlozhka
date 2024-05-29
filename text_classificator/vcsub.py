@@ -3,8 +3,8 @@ import pickle
 from pathlib import Path
 from os.path import getmtime
 from time import time
-from text_classificator.preprocess import preprocess
 import requests
+from text_classificator.preprocess import preprocess
 
 
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:125.0) Gecko/20100101 Firefox/125.0"

@@ -1,4 +1,4 @@
-from database.database import database as r
+from database import database as r
 from redis.commands.search.field import NumericField, TextField
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
 

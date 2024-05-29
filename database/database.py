@@ -1,5 +1,5 @@
-import redis
 import os
+import redis
 
 database = redis.Redis(
     host=os.getenv("REDIS_IP"),
