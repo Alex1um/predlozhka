@@ -12,7 +12,7 @@ class TestGettingTexts(unittest.TestCase):
     
     def test_saving_file(self):
         texts = create_texts_file(["marketing"], 5, save=True)
-        texts2 = load_texts_file
+        texts2 = load_texts_file()
         self.assertDictEqual(texts, texts2)
 
 if __name__ == "__main__":
