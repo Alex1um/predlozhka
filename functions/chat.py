@@ -199,7 +199,7 @@ async def on_post(msg: Message, state: FSMContext):
 
 
 @dp.callback_query()
-async def on_callback_publish(cq: CallbackQuery, _: FSMContext):
+async def on_callback_publish(cq: CallbackQuery, state: FSMContext):
     """
     Asynchronous function that handles the on_callback_publish event triggered by a callback query.
     
