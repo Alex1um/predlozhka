@@ -3,13 +3,17 @@ import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import os
+from pathlib import Path
 
 
 class SpamChecker:
     def __init__(self, vectorizer_file, messages_file):
         self.messages_file = messages_file
         self.vectorizer_file = vectorizer_file
-        self.messages = self.read_messages_from_csv(self.messages_file)
+        if os.path.exists(self.messages_file):
+            self.messages = self.read_messages_from_csv(self.messages_file)
+        else:
+            Path(self.messages_file).touch()
         if os.path.exists(self.vectorizer_file):
             self.vectorizer, self.tfidf_matrix = self.load_vectorizer_and_matrix(self.vectorizer_file)
         else:
