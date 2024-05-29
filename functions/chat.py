@@ -17,7 +17,7 @@ from aiogram.types import (
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from text_classificator.instance import get_translated
+from text_classificator.instance import get_translated, get_spam_msg, get_keywords_msg
 from dispatcher import dp
 from bot import bot
 from database import database as db
@@ -160,12 +160,14 @@ async def on_post(msg: Message, state: FSMContext):
             name = channel_id
         # theme = get_translated(msg.text)
         translate, prob = get_translated(msg.text)
+        spam_msg = get_spam_msg(msg.text)
+        keywords_msg = get_keywords_msg(msg.text)
         for admin_id in admins:
             try:
                 await bot.send_message(
                     admin_id,
                     f"Новый пост в {name.decode('utf-8')} от {msg.from_user.first_name}\nТема:"
-                    f" {translate} с вероятностью {int(prob * 100)}%",
+                    f" {translate} с вероятностью {int(prob * 100)}%\n{spam_msg}\n{keywords_msg}",
                 )
                 await msg.send_copy(
                     admin_id,

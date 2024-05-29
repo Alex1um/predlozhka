@@ -1,7 +1,9 @@
 """
 classificator instance for project uses
 """
+from spam_checker.spam_checker import SpamChecker
 from text_classificator.classificator import Classificator
+from keywords_checker.keywords_checker import check_for_keywords
 
 classificator = Classificator.create_or_load(
     [
@@ -30,6 +32,8 @@ translated = {
     "tribuna": "Реклама/Продвижение",
 }
 
+spam_checker = SpamChecker('cache/vectorizer.pkl', 'cache/messages.csv')
+
 
 def get_translated(text):
     """
@@ -44,3 +48,32 @@ def get_translated(text):
     """
     clas, prob = classificator.predict_max(text)
     return translated.get(clas, "Неизвестно"), prob
+
+
+def get_spam_msg(text):
+    is_spam = spam_checker.check_spam([text])
+    if is_spam[text]:
+        return 'Текст публикации был помечен как спам'
+    else:
+        return 'Спам в этой публикации не был обнаружен'
+
+
+keywords = [
+    'программирование',
+    'политика',
+    'чечня',
+    'америка',
+    'казаков'
+]
+
+
+def get_keywords_msg(text):
+    result = check_for_keywords(text, keywords)
+    if any(result.values() == True):
+        message = 'Были обнаружены следующие ключевые слова: '
+        for key, val in result:
+            if val:
+                message += f'{key} '
+        return message
+    else:
+        return 'Ключевые слова обнаружены не были'
