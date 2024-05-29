@@ -1,3 +1,6 @@
+"""
+classificator module
+"""
 from os.path import getmtime
 from time import time
 from pathlib import Path

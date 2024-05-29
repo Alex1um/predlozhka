@@ -1,3 +1,6 @@
+"""
+getting training texts module
+"""
 import re
 import pickle
 from pathlib import Path

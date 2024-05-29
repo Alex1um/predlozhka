@@ -1,3 +1,6 @@
+"""
+preprocess functions
+"""
 def preprocess(text: str) -> str:
     text = text.lower()
     text = text.replace("\n", " ")

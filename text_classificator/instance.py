@@ -1,3 +1,6 @@
+"""
+classificator instance for project uses
+"""
 from text_classificator.classificator import Classificator
 
 classificator = Classificator.create_or_load(

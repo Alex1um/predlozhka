@@ -1,3 +1,6 @@
+"""
+text getter tests
+"""
 import unittest
 from text_classificator.vcsub import create_texts_file, load_texts_file
 

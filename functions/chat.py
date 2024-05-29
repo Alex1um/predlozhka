@@ -1,3 +1,6 @@
+"""
+chat functions
+"""
 from aiogram.types import Message
 from aiogram import F
 from aiogram.filters import CommandStart, Command
@@ -27,6 +30,16 @@ class PostForm(StatesGroup):
 
 @dp.message(CommandStart())
 async def on_start(msg: Message, state: FSMContext):
+    """
+    Handles the start command from the user and sends a welcome message with a reply keyboard.
+
+    Args:
+        msg (Message): The message object that triggered the command.
+        state (FSMContext): The current state of the conversation.
+
+    Returns:
+        None
+    """
     await state.clear()
     return msg.answer(
         "Добро пожаловать",
@@ -39,6 +52,16 @@ async def on_start(msg: Message, state: FSMContext):
 @dp.message(Command("cancel"))
 @dp.message(Command("reset"))
 async def on_reset(msg: Message, state: FSMContext):
+    """
+    Clears the state and sends a message with a reset confirmation.
+
+    Args:
+        msg (Message): The message object that triggered the command.
+        state (FSMContext): The current state of the conversation.
+
+    Returns:
+        None
+    """
     await state.clear()
     return msg.answer(
         "Сброс...",

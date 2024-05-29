@@ -1,3 +1,6 @@
+"""
+runs tests
+"""
 import unittest
 from tests.classificator import classification, vc
 

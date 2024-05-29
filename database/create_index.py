@@ -1,6 +1,9 @@
-from database import database as r
+"""
+Database create index
+"""
 from redis.commands.search.field import NumericField, TextField
 from redis.commands.search.indexDefinition import IndexDefinition, IndexType
+from database import database as r
 
 channel_schema = {
     TextField("$.name", as_name="name"),

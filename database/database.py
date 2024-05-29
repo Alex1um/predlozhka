@@ -1,3 +1,6 @@
+"""
+Connection to Redis
+"""
 import os
 import redis
 
